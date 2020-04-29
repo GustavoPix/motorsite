@@ -1,0 +1,21 @@
+::-webkit-scrollbar {
+    width: 4px;
+    
+}
+
+::-webkit-scrollbar-corner {
+    background-color:rgba(133,144,151,0);
+    
+}
+
+/* Track */
+::-webkit-scrollbar-track { 
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    //background: $newText2;
+    background: $color1;
+    //background: linear-gradient(90deg, rgba(133,144,151,0) 0%, rgba(255, 50, 120, 0) 70%, rgba(133,144,151,1) 70%, rgba(133,144,151,1) 100%);
+}
