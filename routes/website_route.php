@@ -23,5 +23,36 @@ $app->get('/', function (Request $request, Response $response, array $args) use 
     
 });
 
+$app->get('/{link}', function (Request $request, Response $response, array $args) use ($app) {
+
+    $contentHome = new Content("home");
+    $contentContato = new Content("contato");
+    
+    $page = new Page();
+    $sql = new Sql();
+
+    $pageSql = $sql->select("SELECT * FROM page WHERE link = :link and posted = 1",[
+        ":link"=>$args["link"]
+    ]);
+    if(count($pageSql) > 0)
+    {
+
+        
+        $page->setTpl("header",[
+        ]);
+        $page->setTpl("namePage",[
+            "name"=>$pageSql[0]['name']
+        ]);
+        $page->setTpl("footer",[
+        ]);
+    }
+    else
+    {
+        $page->setTpl("error404",[
+        ]);
+    }
+    
+});
+
 
 ?>

@@ -19,4 +19,3 @@
         hostApi: "<?php echo ROUTE_API; ?>"
     }    
     </script>
-    <h1>Site</h1>
