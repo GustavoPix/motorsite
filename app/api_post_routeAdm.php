@@ -230,6 +230,100 @@ $app->post('/api/adm/page/unpost', function (Request $request, Response $respons
     }
 
 });
+$app->post('/api/adm/page/update', function (Request $request, Response $response, array $args) use ($app) {
+
+    //if(User::ValidateUser())
+    if(true)
+    {
+        $tests = array(
+            "link",
+            "name"
+        );
+        
+        $errors = array();
+        foreach($tests as $t)
+        {
+            if(!isset($_POST[$t]))
+            {
+                array_push($errors,$t);
+            }
+        }
+        if(count($errors) > 0)
+        {
+            $result = array(
+                "message"=>"Bad request",
+                "dataForbidden"=>$errors
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(403);
+            die();
+        }
+        $sql = new Sql();
+
+        $prev = $sql->select("SELECT * FROM page WHERE link = :link",[
+            ":link"=>$_POST["link"]
+        ]);
+        if(count($prev) > 0)
+        {
+            if(isset($_POST["newLink"]))
+            {
+                $prevNew = $sql->select("SELECT id FROM page WHERE link = :link",[
+                    ":link"=>$_POST["newLink"]
+                ]);
+
+                if(count($prevNew) > 0)
+                {
+                    $result = array(
+                        "message"=>"New link already exist",
+                    );
+                    $response->getBody()->write(json_encode($result));
+                    return $response
+                          ->withHeader('Content-Type', 'application/json')
+                          ->withStatus(409);
+                    die();
+                }
+            }
+            $sql->select("UPDATE page SET link = :link, name = :name WHERE id = :id",[
+                ":link"=>isset($_POST["newLink"]) ? $_POST["newLink"] : $_POST["link"],
+                ":name"=>$_POST["name"],
+                ":id"=>$prev[0]["id"]
+            ]);
+            $result = array(
+                "message"=>"Page updated",
+                "link"=>isset($_POST["newLink"]) ? $_POST["newLink"] : $_POST["link"]
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(201);
+        }
+        else
+        {
+            $result = array(
+                "message"=>"Page not exist",
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(409);
+        }
+
+        
+    }
+    else
+    {
+        $result = array(
+            "message"=>"Login unauthorized"
+        );
+        $response->getBody()->write(json_encode($result));
+        return $response
+              ->withHeader('Content-Type', 'application/json')
+              ->withStatus(401);
+    }
+
+});
 $app->post('/api/adm/page/delete', function (Request $request, Response $response, array $args) use ($app) {
 
     //if(User::ValidateUser())
