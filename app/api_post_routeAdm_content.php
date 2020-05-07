@@ -10,16 +10,15 @@ use Source\Sql\Sql;
 use Source\Sql\Models\User;
 
 
-$app->post('/api/adm/section', function (Request $request, Response $response, array $args) use ($app) {
+$app->post('/api/adm/content', function (Request $request, Response $response, array $args) use ($app) {
 
     //if(User::ValidateUser())
     if(true)
     {
         $tests = array(
             "name",
-            "template",
-            "id_page",
-            "position"
+            "text",
+            "id_section"
         );
         
         $errors = array();
@@ -44,27 +43,42 @@ $app->post('/api/adm/section', function (Request $request, Response $response, a
         }
         $sql = new Sql();
 
-        
-        $sql->select("INSERT INTO section(name,template,id_page,position) VALUES(:name,:template,:id_page,:position)",[
+        $prev = $sql->select("SELECT id FROM content WHERE name = :name AND id_section = :id_section",[
             ":name"=>$_POST["name"],
-            ":template"=>$_POST["template"],
-            ":id_page"=>$_POST["id_page"],
-            ":position"=>$_POST["position"]
+            ":id_section"=>$_POST["id_section"]
         ]);
-        $id = $sql->select("SELECT id FROM section WHERE name = :name AND template = :template AND id_page = :id_page ORDER BY id DESC LIMIT 1",[
-            ":name"=>$_POST["name"],
-            ":template"=>$_POST["template"],
-            ":id_page"=>$_POST["id_page"]
-        ]);
-        $result = array(
-            "message"=>"Section Created",
-            "id"=>$id[0]["id"]
-        );
-        $response->getBody()->write(json_encode($result));
-        return $response
-              ->withHeader('Content-Type', 'application/json')
-              ->withStatus(201);
-        
+        if(count($prev) == 0)
+        {
+            $sql->select("INSERT INTO content(name,text,id_section) VALUES(:name,:text,:id_section)",[
+                ":name"=>$_POST["name"],
+                ":text"=>$_POST["text"],
+                ":id_section"=>$_POST["id_section"]
+            ]);
+            $id = $sql->select("SELECT id FROM content WHERE name = :name AND text = :text AND id_section = :id_section ORDER BY id DESC LIMIT 1",[
+                ":name"=>$_POST["name"],
+                ":text"=>$_POST["text"],
+                ":id_section"=>$_POST["id_section"]
+            ]);
+            $result = array(
+                "message"=>"Content Created",
+                "id"=>$id[0]["id"]
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(201);
+        }
+        else
+        {
+            $result = array(
+                "message"=>"Content already exist",
+                "page"=>$prev
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(409);
+        }
         
 
         
@@ -82,17 +96,14 @@ $app->post('/api/adm/section', function (Request $request, Response $response, a
 
 });
 
-$app->post('/api/adm/section/update', function (Request $request, Response $response, array $args) use ($app) {
+$app->post('/api/adm/content/update', function (Request $request, Response $response, array $args) use ($app) {
 
     //if(User::ValidateUser())
     if(true)
     {
         $tests = array(
-            "name",
-            "template",
-            "id_page",
-            "position",
-            "id"
+            "id",
+            "text"
         );
         
         $errors = array();
@@ -117,20 +128,17 @@ $app->post('/api/adm/section/update', function (Request $request, Response $resp
         }
         $sql = new Sql();
 
-        $prev = $sql->select("SELECT * FROM section WHERE id = :id",[
+        $prev = $sql->select("SELECT * FROM content WHERE id = :id",[
             ":id"=>$_POST["id"]
         ]);
         if(count($prev) > 0)
         {
-            $sql->select("UPDATE section SET name = :name, template = :template, id_page = :id_page, position = :position WHERE id = :id",[
-                ":name"=>$_POST["name"],
-                ":template"=>$_POST["template"],
-                ":id_page"=>$_POST["id_page"],
-                ":position"=>$_POST["position"],
+            $sql->select("UPDATE content SET text = :text WHERE id = :id",[
+                ":text"=>$_POST["text"],
                 ":id"=>$prev[0]["id"]
             ]);
             $result = array(
-                "message"=>"Section updated"
+                "message"=>"Content updated"
             );
             $response->getBody()->write(json_encode($result));
             return $response
@@ -140,7 +148,7 @@ $app->post('/api/adm/section/update', function (Request $request, Response $resp
         else
         {
             $result = array(
-                "message"=>"Section not exist",
+                "message"=>"Content not exist",
             );
             $response->getBody()->write(json_encode($result));
             return $response
@@ -163,7 +171,7 @@ $app->post('/api/adm/section/update', function (Request $request, Response $resp
 
 });
 
-$app->post('/api/adm/section/delete', function (Request $request, Response $response, array $args) use ($app) {
+$app->post('/api/adm/content/delete', function (Request $request, Response $response, array $args) use ($app) {
 
     //if(User::ValidateUser())
     if(true)
@@ -194,16 +202,16 @@ $app->post('/api/adm/section/delete', function (Request $request, Response $resp
         }
         $sql = new Sql();
 
-        $prev = $sql->select("SELECT id FROM section WHERE id = :id",[
+        $prev = $sql->select("SELECT id FROM content WHERE id = :id",[
             ":id"=>$_POST["id"]
         ]);
         if(count($prev) > 0)
         {
-            $sql->select("DELETE FROM section WHERE id = :id",[
+            $sql->select("DELETE FROM content WHERE id = :id",[
                 ":id"=>$_POST["id"]
             ]);
             $result = array(
-                "message"=>"Section deleted"
+                "message"=>"Content deleted"
             );
             $response->getBody()->write(json_encode($result));
             return $response
@@ -213,7 +221,7 @@ $app->post('/api/adm/section/delete', function (Request $request, Response $resp
         else
         {
             $result = array(
-                "message"=>"Page not exist",
+                "message"=>"Content not exist",
             );
             $response->getBody()->write(json_encode($result));
             return $response
@@ -235,6 +243,7 @@ $app->post('/api/adm/section/delete', function (Request $request, Response $resp
     }
 
 });
+
 
 
 ?>

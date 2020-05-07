@@ -36,13 +36,20 @@ $app->get('/{link}', function (Request $request, Response $response, array $args
     ]);
     if(count($pageSql) > 0)
     {
-
+        $sections = $sql->select("SELECT * FROM section WHERE id_page = :id_page ORDER BY position",[
+            ":id_page"=>$pageSql[0]['id']
+        ]);
         
         $page->setTpl("header",[
         ]);
-        $page->setTpl("namePage",[
-            "name"=>$pageSql[0]['name']
-        ]);
+
+        foreach($sections as $section)
+        {
+            
+            $page->setTpl($section['template'],[
+            ]);
+        }
+        
         $page->setTpl("footer",[
         ]);
     }
