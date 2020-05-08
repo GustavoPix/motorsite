@@ -45,8 +45,18 @@ $app->get('/{link}', function (Request $request, Response $response, array $args
 
         foreach($sections as $section)
         {
-            
+            $contents = $sql->select("SELECT * FROM content WHERE id_section = :id_section",[
+                ":id_section"=>$section['id']
+            ]);
+
+            $content = array();
+            foreach($contents as $c)
+            {
+                $content[$c['name']] = $c["text"];
+            }
+
             $page->setTpl($section['template'],[
+                "content"=>$content
             ]);
         }
         
