@@ -17,6 +17,8 @@ $app->get('/', function (Request $request, Response $response, array $args) use 
     $page = new Page();
     $page->setTpl("header",[
     ]);
+    $page->setTpl("uploadFile",[
+    ]);
     $page->setTpl("footer",[
         
     ]);

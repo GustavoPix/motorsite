@@ -303,6 +303,194 @@ $app->post('/api/product/disable', function (Request $request, Response $respons
     }
 
 });
+$app->post('/api/product/image', function (Request $request, Response $response, array $args) use ($app) {
+
+    //if(User::ValidateUser())
+    if(true)
+    {
+        $tests = array(
+            "id"
+        );
+        
+        $errors = array();
+        foreach($tests as $t)
+        {
+            if(!isset($_POST[$t]))
+            {
+                array_push($errors,$t);
+            }
+            if(!isset($_FILES['file']))
+            {
+                array_push($errors,"file");
+            }
+        }
+        if(count($errors) > 0)
+        {
+            $result = array(
+                "message"=>"Bad request",
+                "dataForbidden"=>$errors
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(403);
+            die();
+        }
+        $sql = new Sql();
+
+        $prev = $sql->select("SELECT id FROM products WHERE id = :id",[
+            ":id"=>$_POST["id"]
+        ]);
+        if(count($prev) > 0)
+        {
+
+            $uploaddir = '/var/www/html/website/img/uploads/';
+            $uploadfile = $uploaddir . basename($_FILES['file']['name']);
+                    
+            if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
+                $sql->select("INSERT INTO imageProduct(url,id_products) VALUES (:url,:id_products)",[
+                    ":url"=>basename($_FILES['file']['name']),
+                    ":id_products"=>$_POST["id"]
+                ]);
+
+                $result = array(
+                    "message"=>"Image posted"
+                );
+                $response->getBody()->write(json_encode($result));
+                return $response
+                      ->withHeader('Content-Type', 'application/json')
+                      ->withStatus(201);
+
+            } 
+            else 
+            {
+                $result = array(
+                    "message"=>"Error upload",
+                );
+                $response->getBody()->write(json_encode($result));
+                return $response
+                      ->withHeader('Content-Type', 'application/json')
+                      ->withStatus(409);
+            }
+
+           
+        }
+        else
+        {
+            $result = array(
+                "message"=>"Product not exist",
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(409);
+        }
+
+        
+    }
+    else
+    {
+        $result = array(
+            "message"=>"Login unauthorized"
+        );
+        $response->getBody()->write(json_encode($result));
+        return $response
+              ->withHeader('Content-Type', 'application/json')
+              ->withStatus(401);
+    }
+
+});
+$app->post('/api/product/image/delete', function (Request $request, Response $response, array $args) use ($app) {
+
+    //if(User::ValidateUser())
+    if(true)
+    {
+        $tests = array(
+            "url"
+        );
+        
+        $errors = array();
+        foreach($tests as $t)
+        {
+            if(!isset($_POST[$t]))
+            {
+                array_push($errors,$t);
+            }
+        }
+        if(count($errors) > 0)
+        {
+            $result = array(
+                "message"=>"Bad request",
+                "dataForbidden"=>$errors
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(403);
+            die();
+        }
+        $sql = new Sql();
+
+        $prev = $sql->select("SELECT * FROM imageProduct WHERE url = :url",[
+            ":url"=>$_POST["url"]
+        ]);
+        if(count($prev) > 0)
+        {
+
+            $file = '/var/www/html/website/img/uploads/' . $prev[0]['url'];
+                    
+            if (unlink($file)) {
+                $sql->select("DELETE FROM imageProduct WHERE url = :url",[
+                    ":url"=>$_POST["url"]
+                ]);
+
+                $result = array(
+                    "message"=>"Image deleted"
+                );
+                $response->getBody()->write(json_encode($result));
+                return $response
+                      ->withHeader('Content-Type', 'application/json')
+                      ->withStatus(201);
+
+            } 
+            else 
+            {
+                $result = array(
+                    "message"=>"Error delete image",
+                );
+                $response->getBody()->write(json_encode($result));
+                return $response
+                      ->withHeader('Content-Type', 'application/json')
+                      ->withStatus(409);
+            }
+
+           
+        }
+        else
+        {
+            $result = array(
+                "message"=>"Image not exist",
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(409);
+        }
+
+        
+    }
+    else
+    {
+        $result = array(
+            "message"=>"Login unauthorized"
+        );
+        $response->getBody()->write(json_encode($result));
+        return $response
+              ->withHeader('Content-Type', 'application/json')
+              ->withStatus(401);
+    }
+
+});
 
 $app->post('/api/product/delete', function (Request $request, Response $response, array $args) use ($app) {
 
