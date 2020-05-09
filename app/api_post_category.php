@@ -224,6 +224,9 @@ $app->post('/api/category/delete', function (Request $request, Response $respons
             $sql->select("DELETE FROM categoryProducts WHERE name = :name",[
                 ":name"=>$_POST["name"]
             ]);
+            $sql->select("DELETE FROM productInCategory WHERE id_category = :id_category",[
+                ":id_category"=>$prev[0]['id']
+            ]);
             $result = array(
                 "message"=>"Category deleted"
             );

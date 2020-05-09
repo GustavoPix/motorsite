@@ -565,6 +565,187 @@ $app->post('/api/product/delete', function (Request $request, Response $response
 
 });
 
+$app->post('/api/product/category', function (Request $request, Response $response, array $args) use ($app) {
+
+    //if(User::ValidateUser())
+    if(true)
+    {
+        $tests = array(
+            "id_product",
+            "id_category"
+        );
+        
+        $errors = array();
+        foreach($tests as $t)
+        {
+            if(!isset($_POST[$t]))
+            {
+                array_push($errors,$t);
+            }
+        }
+        if(count($errors) > 0)
+        {
+            $result = array(
+                "message"=>"Bad request",
+                "dataForbidden"=>$errors
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(403);
+            die();
+        }
+        $sql = new Sql();
+
+        $prev = $sql->select("SELECT id FROM productInCategory WHERE id_product = :id_product AND id_category = :id_category",[
+            ":id_product"=>$_POST["id_product"],
+            ":id_category"=>$_POST["id_category"]
+        ]);
+        if(count($prev) == 0)
+        {
+            $prevProduct = $sql->select("SELECT id FROM products WHERE id = :id",[
+                ":id"=>$_POST["id_product"]
+            ]);
+            $prevCategory = $sql->select("SELECT id FROM categoryProducts WHERE id = :id",[
+                ":id"=>$_POST["id_category"]
+            ]);
+            if(count($prevProduct) > 0 && count($prevCategory) > 0)
+            {
+                $sql->select("INSERT INTO productInCategory(id_product,id_category) VALUES(:id_product,:id_category)",[
+                    ":id_product"=>$_POST["id_product"],
+                    ":id_category"=>$_POST["id_category"]
+                ]);
+                $result = array(
+                    "message"=>"Product added in category"
+                );
+                $response->getBody()->write(json_encode($result));
+                return $response
+                      ->withHeader('Content-Type', 'application/json')
+                      ->withStatus(201);
+            }
+            else
+            {
+                $result = array(
+                    "message"=>"Error in add product in this category",
+                    "product"=>count($prevProduct) > 0,
+                    "category"=>count($prevCategory) > 0
+                );
+                $response->getBody()->write(json_encode($result));
+                return $response
+                      ->withHeader('Content-Type', 'application/json')
+                      ->withStatus(409);
+            }
+            
+            
+        }
+        else
+        {
+            $result = array(
+                "message"=>"Product already in this category",
+                "category"=>$prev
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(409);
+        }
+        
+        
+
+        
+    }
+    else
+    {
+        $result = array(
+            "message"=>"Login unauthorized"
+        );
+        $response->getBody()->write(json_encode($result));
+        return $response
+              ->withHeader('Content-Type', 'application/json')
+              ->withStatus(401);
+    }
+
+});
+$app->post('/api/product/category/remove', function (Request $request, Response $response, array $args) use ($app) {
+
+    //if(User::ValidateUser())
+    if(true)
+    {
+        $tests = array(
+            "id_product",
+            "id_category"
+        );
+        
+        $errors = array();
+        foreach($tests as $t)
+        {
+            if(!isset($_POST[$t]))
+            {
+                array_push($errors,$t);
+            }
+        }
+        if(count($errors) > 0)
+        {
+            $result = array(
+                "message"=>"Bad request",
+                "dataForbidden"=>$errors
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(403);
+            die();
+        }
+        $sql = new Sql();
+
+        $prev = $sql->select("SELECT id FROM productInCategory WHERE id_product = :id_product AND id_category = :id_category",[
+            ":id_product"=>$_POST["id_product"],
+            ":id_category"=>$_POST["id_category"]
+        ]);
+        if(count($prev) > 0)
+        {
+            $sql->select("DELETE FROM productInCategory WHERE id_product = :id_product AND id_category = :id_category",[
+                ":id_product"=>$_POST["id_product"],
+                ":id_category"=>$_POST["id_category"]
+            ]);
+            $result = array(
+                "message"=>"Product removed of category"
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(201);
+            
+            
+        }
+        else
+        {
+            $result = array(
+                "message"=>"Product not already in this category",
+                "category"=>$prev
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(409);
+        }
+        
+        
+
+        
+    }
+    else
+    {
+        $result = array(
+            "message"=>"Login unauthorized"
+        );
+        $response->getBody()->write(json_encode($result));
+        return $response
+              ->withHeader('Content-Type', 'application/json')
+              ->withStatus(401);
+    }
+
+});
 
 
 ?>
