@@ -370,13 +370,19 @@ $app->post('/api/adm/user/delete', function (Request $request, Response $respons
         }
         $sql = new Sql();
 
-        $prev = $sql->select("SELECT id FROM social WHERE email = :email",[
+        $prev = $sql->select("SELECT id FROM users WHERE email = :email",[
             ":email"=>$_POST["email"]
         ]);
         if(count($prev) > 0)
         {
-            $sql->select("DELETE FROM social WHERE email = :email",[
+            $sql->select("DELETE FROM users WHERE email = :email",[
                 ":email"=>$_POST["email"]
+            ]);
+            $sql->select("DELETE FROM userSocial WHERE id_user = :id_user",[
+                ":id_user"=>$prev[0]["id"]
+            ]);
+            $sql->select("DELETE FROM userContacts WHERE id_user = :id_user",[
+                ":id_user"=>$prev[0]["id"]
             ]);
             $result = array(
                 "message"=>"User deleted"
@@ -389,7 +395,7 @@ $app->post('/api/adm/user/delete', function (Request $request, Response $respons
         else
         {
             $result = array(
-                "message"=>"Social not exist",
+                "message"=>"User not exist",
             );
             $response->getBody()->write(json_encode($result));
             return $response
@@ -650,6 +656,246 @@ $app->post('/api/adm/user/social/delete', function (Request $request, Response $
         {
             $result = array(
                 "message"=>"Social not exist",
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(409);
+        }
+
+        
+    }
+    else
+    {
+        $result = array(
+            "message"=>"Login unauthorized"
+        );
+        $response->getBody()->write(json_encode($result));
+        return $response
+              ->withHeader('Content-Type', 'application/json')
+              ->withStatus(401);
+    }
+
+});
+
+$app->post('/api/adm/user/contact', function (Request $request, Response $response, array $args) use ($app) {
+
+    //if(User::ValidateUser())
+    if(true)
+    {
+        $tests = array(
+            "name",
+            "type",
+            "contact",
+            "id_user"
+        );
+        
+        $errors = array();
+        foreach($tests as $t)
+        {
+            if(!isset($_POST[$t]))
+            {
+                array_push($errors,$t);
+            }
+        }
+        if(count($errors) > 0)
+        {
+            $result = array(
+                "message"=>"Bad request",
+                "dataForbidden"=>$errors
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(403);
+            die();
+        }
+        $sql = new Sql();
+        $prevUser = $sql->select("SELECT id FROM users WHERE id = :id",[
+            ":id"=>$_POST["id_user"]
+        ]);
+        if($prevUser)
+        {
+        
+        
+            $sql->select("INSERT INTO userContacts(name,type,contact,id_user) VALUES(:name,:type,:contact,:id_user)",[
+                ":name"=>$_POST["name"],
+                ":type"=>$_POST["type"],
+                ":contact"=>$_POST["contact"],
+                ":id_user"=>$_POST["id_user"]
+            ]);
+            $id = $sql->select("SELECT id FROM userContacts WHERE name = :name AND type = :type AND contact = :contact AND id_user = :id_user ORDER BY id DESC LIMIT 1",[
+                ":name"=>$_POST["name"],
+                ":type"=>$_POST["type"],
+                ":contact"=>$_POST["contact"],
+                ":id_user"=>$_POST["id_user"]
+            ]);
+            $result = array(
+                "message"=>"Contect Added",
+                "id"=>$id[0]["id"]
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(201);
+
+        }
+        else
+        {
+            $result = array(
+                "message"=>"User note exist"
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(409);
+        }
+        
+    }
+    else
+    {
+        $result = array(
+            "message"=>"Login unauthorized"
+        );
+        $response->getBody()->write(json_encode($result));
+        return $response
+              ->withHeader('Content-Type', 'application/json')
+              ->withStatus(401);
+    }
+
+});
+
+$app->post('/api/adm/user/contact/update', function (Request $request, Response $response, array $args) use ($app) {
+
+    //if(User::ValidateUser())
+    if(true)
+    {
+        $tests = array(
+            "id"
+        );
+        
+        $errors = array();
+        foreach($tests as $t)
+        {
+            if(!isset($_POST[$t]))
+            {
+                array_push($errors,$t);
+            }
+        }
+        if(count($errors) > 0)
+        {
+            $result = array(
+                "message"=>"Bad request",
+                "dataForbidden"=>$errors
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(403);
+            die();
+        }
+        $sql = new Sql();
+
+        $prev = $sql->select("SELECT * FROM userContacts WHERE id = :id",[
+            ":id"=>$_POST["id"]
+        ]);
+        if(count($prev) > 0)
+        {
+            
+            $sql->select("UPDATE userContacts SET name = :name, type = :type, contact = :contact WHERE id = :id",[
+                ":name"=>isset($_POST["name"]) ? $_POST["name"] : $prev[0]['name'],
+                ":type"=>isset($_POST["type"]) ? $_POST["type"] : $prev[0]['type'],
+                ":contact"=>isset($_POST["contact"]) ? $_POST["contact"] : $prev[0]['contact'],
+                ":id"=>$prev[0]["id"]
+            ]);
+            $result = array(
+                "message"=>"Contact updated"
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(201);
+            
+            
+        }
+        else
+        {
+            $result = array(
+                "message"=>"Contact not exist",
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(409);
+        }
+
+        
+    }
+    else
+    {
+        $result = array(
+            "message"=>"Login unauthorized"
+        );
+        $response->getBody()->write(json_encode($result));
+        return $response
+              ->withHeader('Content-Type', 'application/json')
+              ->withStatus(401);
+    }
+
+});
+
+
+$app->post('/api/adm/user/contact/delete', function (Request $request, Response $response, array $args) use ($app) {
+
+    //if(User::ValidateUser())
+    if(true)
+    {
+        $tests = array(
+            "id"
+        );
+        
+        $errors = array();
+        foreach($tests as $t)
+        {
+            if(!isset($_POST[$t]))
+            {
+                array_push($errors,$t);
+            }
+        }
+        if(count($errors) > 0)
+        {
+            $result = array(
+                "message"=>"Bad request",
+                "dataForbidden"=>$errors
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(403);
+            die();
+        }
+        $sql = new Sql();
+
+        $prev = $sql->select("SELECT id FROM userContacts WHERE id = :id",[
+            ":id"=>$_POST["id"]
+        ]);
+        if(count($prev) > 0)
+        {
+            $sql->select("DELETE FROM userContacts WHERE id = :id",[
+                ":id"=>$_POST["id"]
+            ]);
+            $result = array(
+                "message"=>"Contact deleted"
+            );
+            $response->getBody()->write(json_encode($result));
+            return $response
+                  ->withHeader('Content-Type', 'application/json')
+                  ->withStatus(201);
+        }
+        else
+        {
+            $result = array(
+                "message"=>"Contact not exist",
             );
             $response->getBody()->write(json_encode($result));
             return $response
