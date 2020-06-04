@@ -1,0 +1,117 @@
+//Defaults
+@import "admvariables";
+@import "reset";
+@import "mixins";
+@import "grid";
+
+*{
+    font-family: $font1;
+}
+
+body{
+    background: $black;
+    color: $black;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+}
+
+.hidden{
+    display: none;
+}
+
+.menu{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background: #2E2930;
+    >div{
+        
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        cursor: pointer;
+        p{
+            color: $white1;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+        *{
+            transition: 0.5s ease;
+        }
+        &:hover{
+            svg{
+                *{
+                    fill:$color1;
+                }
+            }
+            p{
+                color: $color1;
+            }
+        }
+        
+        
+    }
+    .right{
+        display: block;
+        padding-top: 0;
+        cursor: default;
+        >div{
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            cursor: pointer;
+            p{
+                color: $white1;
+                margin-left: 10px;
+                font-size: 14px;
+            }
+            *{
+                transition: 0.5s ease;
+            }
+            &:hover{
+                svg{
+                    *{
+                        fill:$color1;
+                    }
+                }
+                p{
+                    color: $color1;
+                }
+            }
+        }
+        .selected{
+            svg{
+                *{
+                    fill:$color1;
+                }
+            }
+            p{
+                color: $color1;
+            }
+        }
+        &:hover{
+            *{
+                fill:$white1;
+            }
+        }
+    }
+    .selected{
+        svg{
+            *{
+                fill:$color1;
+            }
+        }
+        p{
+            color: $color1;
+        }
+    }
+}
+.content{
+    padding: 20px;
+}

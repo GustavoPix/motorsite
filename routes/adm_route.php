@@ -33,17 +33,14 @@ $app->get('/adm/login', function (Request $request, Response $response, array $a
 });
 $app->get('/adm/paginas/home', function (Request $request, Response $response, array $args) use ($app) {
 
-    if(User::ValidateUser())
+    //if(User::ValidateUser())
+    if(true)
     {
+        $contentHome = new Content("home");
+        $contentContato = new Content("contato");
+        
         $page = new Page();
-        $content = new Content("home");
         $page->setTpl("adm_header",[
-
-        ]);
-        $page->setTpl("adm_paginas_home",[
-            "mainMenu"=>MainMenu::Menu("paginas"),
-            "secondMenu"=>PaginasMenu::Menu("home"),
-            "content"=>$content
         ]);
         $page->setTpl("adm_footer",[
 

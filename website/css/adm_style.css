@@ -1,0 +1,224 @@
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ul, li, a, div, img, button, input {
+  margin: 0;
+  padding: 0;
+  min-width: 1px;
+  min-height: 1px;
+  font-style: none;
+  text-decoration: none;
+  font-weight: normal;
+  list-style-type: none;
+}
+
+.container {
+  margin: 0 auto;
+  width: 1050px;
+  max-width: calc(100% - 200px);
+}
+
+.container::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.container::before {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+@media screen and (max-width: 899px) {
+  .container {
+    max-width: calc(100% - 50px);
+  }
+}
+
+.extracontainer {
+  margin: 0 auto;
+  width: 1250px;
+  max-width: 100%;
+}
+
+.extracontainer::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.extracontainer::before {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.grid-1 {
+  width: calc( 50% - 50px);
+  margin-left: 25px;
+  margin-right: 25px;
+  float: left;
+}
+
+@media screen and (max-width: 899px) {
+  .grid-1 .grid-1 {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+@media screen and (max-width: 899px) {
+  .grid-1 {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.grid-2 {
+  width: calc( 100% - 50px);
+  margin-left: 25px;
+  margin-right: 25px;
+  float: left;
+}
+
+@media screen and (max-width: 899px) {
+  .grid-2 .grid-2 {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+@media screen and (max-width: 899px) {
+  .grid-2 {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+* {
+  font-family: "Space Mono", monospace;
+}
+
+body {
+  background: #171219;
+  color: #171219;
+  width: 100vw;
+  height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.hidden {
+  display: none;
+}
+
+.menu {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background: #2E2930;
+}
+
+.menu > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;
+}
+
+.menu > div p {
+  color: #FFFAFF;
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.menu > div * {
+  -webkit-transition: 0.5s ease;
+  transition: 0.5s ease;
+}
+
+.menu > div:hover svg * {
+  fill: #E67015;
+}
+
+.menu > div:hover p {
+  color: #E67015;
+}
+
+.menu .right {
+  display: block;
+  padding-top: 0;
+  cursor: default;
+}
+
+.menu .right > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;
+}
+
+.menu .right > div p {
+  color: #FFFAFF;
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.menu .right > div * {
+  -webkit-transition: 0.5s ease;
+  transition: 0.5s ease;
+}
+
+.menu .right > div:hover svg * {
+  fill: #E67015;
+}
+
+.menu .right > div:hover p {
+  color: #E67015;
+}
+
+.menu .right .selected svg * {
+  fill: #E67015;
+}
+
+.menu .right .selected p {
+  color: #E67015;
+}
+
+.menu .right:hover * {
+  fill: #FFFAFF;
+}
+
+.menu .selected svg * {
+  fill: #E67015;
+}
+
+.menu .selected p {
+  color: #E67015;
+}
+
+.content {
+  padding: 20px;
+}
+/*# sourceMappingURL=adm_style.css.map */

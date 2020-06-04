@@ -5,35 +5,12 @@
 @import "grid";
 
 //Styles
-@import "headers/header1";
-@import "headers/formNewProject";
-@import "banners/banner1";
-@import "banners/contato";
-@import "banners/newsletter";
-@import "lists/iconList";
-@import "lists/listCard1";
-@import "lists/tituloFrase1";
-@import "lists/tituloFrase2";
-@import "lists/listProjects";
-@import "lists/listBlogs";
-@import "headers/solucoes";
-@import "footers/footer1";
-@import "lists/equipe";
-@import "lists/processos";
-@import "portifolio/bannerPrincipal";
-@import "portifolio/features";
-@import "portifolio/solucao";
-@import "portifolio/depoimento";
-@import "banners/servicosOferecidos";
-@import "banners/termos";
-@import "adm/main";
-@import "adm/menu";
+
 @import "scroll";
 @import "login";
 
 
 //buttons
-@import "buttons/button1";
 
 body{
     background: $black;
